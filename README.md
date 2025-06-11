@@ -1,66 +1,66 @@
-# ForgeSpec v1.0 (Especificación Técnica)
+# ForgeSpec v1.0 — Especificación Técnica
 
-**ForgeSpec** es una especificación independiente para el modelado de entidades y procesos de negocio en un formato estructurado, legible por humanos y herramientas. Su propósito principal es fungir como una **fuente de verdad unificada** desde la cual se puedan generar artefactos derivados como contratos OpenAPI, definiciones AsyncAPI, esquemas de validación, documentación técnica, SDKs, y más.
+**ForgeSpec** es una especificación independiente y formal para el modelado estructurado de entidades y procesos de negocio. Su objetivo principal es servir como una fuente única de verdad, a partir de la cual se pueden generar artefactos técnicos como contratos OpenAPI (OAS3), definiciones AsyncAPI, esquemas de validación, documentación técnica, SDKs, y más.
 
-> La especificación define la estructura semántica del modelo; no prescribe comportamientos de implementación ni impone restricciones de plataforma.
+Esta especificación se orienta a organizaciones que requieran coherencia semántica, automatización de procesos técnicos y alineación entre capas de arquitectura mediante una definición de modelo unificada y extensible.
 
 ---
 
-## 📘 Tabla de Contenidos
+## Tabla de Contenidos
 
 1. [Introducción](#introducción)
-2. [Filosofía](#filosofía)
-3. [Estructura General del Documento](#estructura-general-del-documento)
+2. [Principios de Diseño](#principios-de-diseño)
+3. [Estructura del Documento](#estructura-del-documento)
 4. [Tipos de Modelo](#tipos-de-modelo)
 
-   * [`entity`](#tipo-entity)
-   * [`process`](#tipo-process)
-5. [Especificación de Campos (`Field`)](#especificación-de-campos-field)
+   * [`entity`](#modelo-de-tipo-entity)
+   * [`process`](#modelo-de-tipo-process)
+5. [Definición de Campo (`Field`)](#definición-de-campo-field)
 6. [Reglas de Validación](#reglas-de-validación)
-7. [Ejemplos](#ejemplos)
-8. [Hoja de Ruta](#hoja-de-ruta)
+7. [Ejemplos de Implementación](#ejemplos-de-implementación)
+8. [Proyecciones de Evolución](#proyecciones-de-evolución)
 
 ---
 
-## 📖 Introducción
+## Introducción
 
-ForgeSpec propone un enfoque sistemático para describir modelos de datos y flujos de operaciones. Está diseñado para ser agnóstico a tecnologías de transporte y persistencia, y es particularmente últil en entornos donde se desea alinear múltiples capas de una arquitectura (API, base de datos, lógica de negocio) a partir de una descripción coherente y centralizada.
-
----
-
-## 🧭 Filosofía
-
-* **Neutralidad estructural**: ForgeSpec no impone ni asume un stack tecnológico.
-* **Claridad semántica**: Sus términos son explícitos, consistentes y en inglés técnico.
-* **Internacionalización**: Los elementos descriptivos pueden escribirse en cualquier idioma natural.
-* **Extensibilidad progresiva**: El modelo está diseñado para ser extendido en futuras versiones (por ejemplo, con relaciones, herencia o seguridad).
-* **Generatividad**: Su estructura permite la producción automatizada de artefactos como OpenAPI y AsyncAPI.
+ForgeSpec introduce una aproximación sistemática para la descripción de modelos de dominio y operaciones funcionales. Está diseñado para ser independiente de la tecnología subyacente, permitiendo su adopción en ecosistemas heterogéneos donde es deseable alinear definiciones de negocio, interfaces técnicas y estructuras de datos en un marco común y versionado.
 
 ---
 
-## 🧱 Estructura General del Documento
+## Principios de Diseño
 
-Un archivo válido ForgeSpec debe contener los siguientes elementos en su nivel raíz:
-
-| Clave       | Tipo   | Obligatorio | Descripción                          |
-| ----------- | ------ | ----------- | ------------------------------------ |
-| `forgespec` | string | ✔           | Versión del estándar (ej. `"1.0"`)   |
-| `type`      | string | ✔           | Tipo de modelo: `entity` o `process` |
+* **Neutralidad tecnológica**: ForgeSpec no impone un stack técnico específico.
+* **Consistencia semántica**: Terminología clara, precisa y estandarizada en inglés técnico.
+* **Multilingüismo documental**: Las descripciones pueden escribirse en cualquier idioma natural.
+* **Extensibilidad progresiva**: Diseñado para ampliarse con módulos opcionales y futuras versiones.
+* **Automatización orientada a contratos**: Facilita la generación de especificaciones OpenAPI, AsyncAPI y otros artefactos relacionados.
 
 ---
 
-## 🤩 Tipos de Modelo
+## Estructura del Documento
 
-### Tipo `entity`
+Todo archivo válido basado en ForgeSpec debe incluir los siguientes elementos a nivel raíz:
 
-Representa una entidad del dominio, entendida como una unidad estructural que usualmente es persistente y accedida mediante operaciones CRUD.
+| Clave       | Tipo   | Obligatorio | Descripción                                           |
+| ----------- | ------ | ----------- | ----------------------------------------------------- |
+| `forgespec` | string | Sí          | Indica la versión de la especificación utilizada.     |
+| `type`      | string | Sí          | Define la naturaleza del modelo: `entity` o `process` |
 
-**Campos adicionales requeridos**:
+---
+
+## Tipos de Modelo
+
+### Modelo de tipo `entity`
+
+Este tipo representa una entidad del dominio de negocio, concebida como una estructura persistente susceptible de ser accedida mediante operaciones CRUD.
+
+**Campos obligatorios**:
 
 * `entity` (`string`)
 * `fields` (`array` de objetos tipo `Field`)
 
-**Opcionales**:
+**Campos opcionales**:
 
 * `description` (`string`)
 * `crud` (`object` con claves `create`, `read`, `update`, `delete`)
@@ -71,7 +71,7 @@ Representa una entidad del dominio, entendida como una unidad estructural que us
 forgespec: "1.0"
 type: entity
 entity: Empleado
-description: Gestión de empleados
+description: Gestión de empleados de la organización
 fields:
   - name: id
     type: string
@@ -92,16 +92,16 @@ crud:
 
 ---
 
-### Tipo `process`
+### Modelo de tipo `process`
 
-Representa una operación, flujo o comando de negocio. No se enfoca en persistencia, sino en ejecución lógica basada en entrada/salida.
+Este tipo describe operaciones, flujos o comandos de negocio que implican una entrada de datos y una salida esperada. No se orienta a la persistencia sino a la ejecución de lógica aplicada.
 
-**Campos adicionales requeridos**:
+**Campos obligatorios**:
 
 * `process` (`string`)
 * `input` (`array` de objetos tipo `Field`)
 
-**Opcionales**:
+**Campos opcionales**:
 
 * `output` (`array` de objetos tipo `Field`)
 * `rest` (`object` con `method` y `path`)
@@ -132,53 +132,53 @@ rest:
 
 ---
 
-## 🧬 Especificación de Campos (`Field`)
+## Definición de Campo (`Field`)
 
-Los objetos `Field` son el componente estructural de los modelos. Se utilizan tanto en entidades (`fields`) como en procesos (`input`, `output`).
+Los objetos de tipo `Field` representan las unidades de información básicas, tanto en estructuras de entidades como en entradas y salidas de procesos.
 
-| Clave         | Tipo    | Obligatorio | Descripción                                      |
-| ------------- | ------- | ----------- | ------------------------------------------------ |
-| `name`        | string  | ✔           | Nombre del atributo                              |
-| `type`        | string  | ✔           | Tipo base (`string`, `integer`, `boolean`, etc.) |
-| `format`      | string  | ✖           | Formato específico (`uuid`, `email`, etc.)       |
-| `required`    | boolean | ✖           | Si es obligatorio en el contexto de entrada      |
-| `readOnly`    | boolean | ✖           | Solo lectura (presente solo en respuestas)       |
-| `description` | string  | ✖           | Descripción textual libre                        |
-
----
-
-## 📊 Reglas de Validación
-
-* Todo documento debe contener `forgespec` y `type`.
-* Si `type: entity`, deben existir `entity` y `fields`.
-* Si `type: process`, deben existir `process` e `input`.
-* Todos los objetos `Field` deben tener `name` y `type`.
-* No se permiten claves adicionales fuera del esquema previsto.
+| Clave         | Tipo    | Obligatorio | Descripción                                                       |
+| ------------- | ------- | ----------- | ----------------------------------------------------------------- |
+| `name`        | string  | Sí          | Nombre técnico del campo                                          |
+| `type`        | string  | Sí          | Tipo de dato (`string`, `integer`, `boolean`, `number`, etc.)     |
+| `format`      | string  | No          | Formato específico (`uuid`, `email`, `date`, etc.)                |
+| `required`    | boolean | No          | Indica si el campo es obligatorio en entradas                     |
+| `readOnly`    | boolean | No          | Indica si el campo solo debe figurar en respuestas (solo lectura) |
+| `description` | string  | No          | Descripción en lenguaje natural del propósito del campo           |
 
 ---
 
-## 🧪 Ejemplos
+## Reglas de Validación
 
-Se incluyen ejemplos en el directorio `/examples/`, tanto válidos como inválidos, para facilitar la validación y comprensión.
-
----
-
-## 🚧 Hoja de Ruta
-
-ForgeSpec será extendido en versiones futuras con:
-
-* Soporte para relaciones (`hasOne`, `hasMany`, etc.)
-* Composición e inclusión de modelos (`extends`, `includes`)
-* Traits reutilizables
-* Anotaciones de seguridad, autorización y visibilidad
-* Generadores CLI para OAS3, AsyncAPI y schemas JSON
+* Todo documento debe declarar explícitamente `forgespec` y `type`.
+* Si `type` es `entity`, deben estar presentes `entity` y `fields`.
+* Si `type` es `process`, deben estar presentes `process` e `input`.
+* Cada objeto `Field` debe contener al menos `name` y `type`.
+* Claves adicionales no documentadas no están permitidas en la versión actual.
 
 ---
 
-## 📩 Participación
+## Ejemplos de Implementación
 
-Este proyecto está en etapa de diseño. Se agradecen sugerencias, críticas constructivas y pruebas de adopción. Puedes abrir un issue o forkear este repositorio para proponer mejoras.
+El repositorio incluye un directorio `/examples/` con múltiples documentos ForgeSpec de referencia para diferentes casos de uso. Se incluyen variantes válidas e inválidas para facilitar el desarrollo de validadores.
 
 ---
 
-© 2025 — ForgeSpec Initiative. Libre para uso académico, comercial y comunitario bajo licencia MIT.
+## Proyecciones de Evolución
+
+Entre las futuras extensiones previstas para ForgeSpec se incluyen:
+
+* Relaciones entre entidades (`hasOne`, `hasMany`, `belongsTo`)
+* Inclusión y composición de modelos (`extends`, `includes`)
+* Traits reutilizables y modularización
+* Anotaciones de seguridad, visibilidad y control de acceso
+* Generadores CLI para OpenAPI, AsyncAPI y JSON Schema
+
+---
+
+## Participación
+
+Esta especificación se encuentra en fase de adopción temprana. Las propuestas de mejora, contribuciones técnicas y discusiones arquitectónicas son bienvenidas a través de los canales establecidos en este repositorio.
+
+---
+
+© 2025 ForgeSpec Initiative — Distribuido bajo licencia MIT.
