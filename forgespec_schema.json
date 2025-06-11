@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://apifactory.org/forgespec.schema.json",
+  "title": "ForgeSpec Schema",
+  "description": "JSON Schema for validating ForgeSpec v1.0.0 documents",
+  "type": "object",
+  "required": ["forgespec", "type"],
+  "properties": {
+    "forgespec": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["entity", "process"]
+    },
+
+    "entity": {
+      "type": "string"
+    },
+    "fields": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/field" }
+    },
+
+    "process": {
+      "type": "string"
+    },
+    "input": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/field" }
+    },
+    "output": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/field" }
+    },
+    "rest": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": ["get", "post", "put", "delete", "patch"]
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^/"
+        }
+      },
+      "required": ["method", "path"],
+      "additionalProperties": false
+    },
+
+    "description": {
+      "type": "string"
+    },
+    "crud": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "read": { "type": "boolean" },
+        "update": { "type": "boolean" },
+        "delete": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    }
+  },
+
+  "allOf": [
+    {
+      "if": {
+        "properties": { "type": { "const": "entity" } }
+      },
+      "then": {
+        "required": ["entity", "fields"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "type": { "const": "process" } }
+      },
+      "then": {
+        "required": ["process", "input"]
+      }
+    }
+  ],
+
+  "definitions": {
+    "field": {
+      "type": "object",
+      "required": ["name", "type"],
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "format": { "type": "string" },
+        "required": { "type": "boolean" },
+        "readOnly": { "type": "boolean" },
+        "description": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+
+  "additionalProperties": false
+}

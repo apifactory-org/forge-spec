@@ -12,14 +12,17 @@ ForgeSpec promueve la separación entre el modelo de información y sus mecanism
 2. [Principios Rectores](#principios-rectores)
 3. [Esquema General del Documento](#esquema-general-del-documento)
 4. [Tipos de Modelo](#tipos-de-modelo)
-   - [`entity`](#modelo-de-tipo-entity)
-   - [`process`](#modelo-de-tipo-process)
+
+   * [Modelo de tipo `entity`](#modelo-de-tipo-entity)
+   * [Modelo de tipo `process`](#modelo-de-tipo-process)
 5. [Definición del Tipo `Field`](#definición-del-tipo-field)
 6. [Reglas de Conformidad](#reglas-de-conformidad)
-7. [Gestión de Versiones](#gestión-de-versiones)
-8. [Implementación](#implementación)
-9. [Representación del Metamodelo](#representación-del-metamodelo)
-10. [Extensiones y Evolución Esperada](#extensiones-y-evolución-esperada)
+7. [Diseño del Esquema JSON](#diseño-del-esquema-json)
+8. [Representación del Metamodelo](#representación-del-metamodelo)
+9. [Gestión de Versiones](#gestión-de-versiones)
+10. [Implementación](#implementación)
+11. [Extensiones y Evolución Esperada](#extensiones-y-evolución-esperada)
+12. [Guía de Uso del Schema JSON](#guía-de-uso-del-schema-json)
 
 ---
 
@@ -33,11 +36,11 @@ No constituye un lenguaje de programación ni una especificación de transporte,
 
 ## Principios Rectores
 
-- **Neutralidad tecnológica**: Los modelos definidos con ForgeSpec no dependen de un lenguaje, framework o protocolo específico.
-- **Claridad semántica**: El conjunto de términos utilizados está cuidadosamente controlado para minimizar ambigüedades.
-- **Separación de responsabilidades**: La definición estructural se disocia explícitamente de su uso o despliegue.
-- **Extensibilidad progresiva**: La especificación admite mecanismos formales de expansión.
-- **Consistencia y auditabilidad**: El formato estructurado permite validar, versionar y rastrear los cambios de forma sistemática.
+* **Neutralidad tecnológica**
+* **Claridad semántica**
+* **Separación de responsabilidades**
+* **Extensibilidad progresiva**
+* **Consistencia y auditabilidad**
 
 ---
 
@@ -45,10 +48,10 @@ No constituye un lenguaje de programación ni una especificación de transporte,
 
 Todo documento ForgeSpec debe incluir los siguientes elementos en su nivel raíz:
 
-| Clave        | Tipo     | Obligatorio | Descripción                                                             |
-|--------------|----------|-------------|-------------------------------------------------------------------------|
-| `forgespec`  | string   | Sí          | Versión exacta de la especificación utilizada. Ej.: "1.0.0".         |
-| `type`       | string   | Sí          | Clasificación del modelo: `entity` o `process`.                         |
+| Clave       | Tipo   | Obligatorio | Descripción                                                  |
+| ----------- | ------ | ----------- | ------------------------------------------------------------ |
+| `forgespec` | string | Sí          | Versión exacta de la especificación utilizada. Ej.: "1.0.0". |
+| `type`      | string | Sí          | Clasificación del modelo: `entity` o `process`.              |
 
 ---
 
@@ -56,108 +59,126 @@ Todo documento ForgeSpec debe incluir los siguientes elementos en su nivel raíz
 
 ### Modelo de tipo `entity`
 
-Representa una estructura semántica de datos del dominio, la cual se compone de atributos con nombre, tipo y propiedades adicionales. Las entidades suelen corresponder a recursos persistentes, y pueden ser mapeadas a capas de almacenamiento o serialización.
+Representa una estructura semántica de datos del dominio, la cual se compone de atributos con nombre, tipo y propiedades adicionales.
 
 **Elementos obligatorios**:
-- `entity`: Identificador único del modelo en contexto.
-- `fields`: Lista ordenada de componentes del tipo `Field`.
+
+* `entity`
+* `fields`
 
 **Elementos opcionales**:
-- `description`: Texto explicativo.
-- `crud`: Objeto que define las operaciones permitidas sobre la entidad (`create`, `read`, `update`, `delete`), cada una expresada como un valor booleano.
+
+* `description`
+* `crud`
 
 ---
 
 ### Modelo de tipo `process`
 
-Define una operación lógica, funcional o computacional que toma uno o más datos de entrada y produce un resultado, sin implicar necesariamente persistencia. Está orientado a representar servicios, cálculos, flujos u otras acciones del negocio.
+Define una operación funcional que toma datos de entrada y puede producir un resultado.
 
 **Elementos obligatorios**:
-- `process`: Identificador nominal de la operación.
-- `input`: Lista de objetos del tipo `Field` que constituyen los parámetros de entrada.
+
+* `process`
+* `input`
 
 **Elementos opcionales**:
-- `output`: Lista de objetos del tipo `Field` que componen la estructura esperada de salida.
-- `rest`: Objeto que define una interfaz HTTP opcional, compuesta por `method` y `path`.
-- `description`: Texto descriptivo de propósito general.
+
+* `output`
+* `rest`
+* `description`
 
 ---
 
 ## Definición del Tipo `Field`
 
-Un objeto del tipo `Field` representa un componente atómico de información. Su uso es uniforme tanto para describir los atributos de una entidad como los parámetros de entrada o salida de un proceso.
+Un `Field` es un componente atómico de información.
 
-| Clave        | Tipo     | Obligatorio | Descripción                                                                |
-|--------------|----------|-------------|----------------------------------------------------------------------------|
-| `name`       | string   | Sí          | Nombre técnico del campo.                                                  |
-| `type`       | string   | Sí          | Tipo de dato base (`string`, `integer`, `boolean`, `number`, etc.).        |
-| `format`     | string   | No          | Formato específico, útil para validación semántica (`uuid`, `email`, etc.).|
-| `required`   | boolean  | No          | Indica si el campo es obligatorio en los contextos de entrada.             |
-| `readOnly`   | boolean  | No          | Señala si el campo solo debe aparecer en respuestas.                       |
-| `description`| string   | No          | Comentario en lenguaje natural, opcional y multilingüe.                    |
+| Clave         | Tipo    | Obligatorio | Descripción                                   |
+| ------------- | ------- | ----------- | --------------------------------------------- |
+| `name`        | string  | Sí          | Nombre técnico del campo.                     |
+| `type`        | string  | Sí          | Tipo de dato base.                            |
+| `format`      | string  | No          | Formato específico para validación semántica. |
+| `required`    | boolean | No          | Campo obligatorio en entradas.                |
+| `readOnly`    | boolean | No          | Solo aparece en respuestas.                   |
+| `description` | string  | No          | Comentario opcional.                          |
 
 ---
 
 ## Reglas de Conformidad
 
-Un documento es conforme a la versión `1.0.0` de ForgeSpec si cumple con los siguientes criterios:
+Un documento es conforme si:
 
-- Incluye las claves `forgespec` y `type` en la raíz.
-- Si `type` es `entity`, debe contener `entity` y `fields`.
-- Si `type` es `process`, debe contener `process` e `input`.
-- Cada objeto del tipo `Field` debe contener, como mínimo, las claves `name` y `type`.
-- No se admiten claves no documentadas salvo que sean parte de una extensión aprobada oficialmente.
-
----
-
-## Gestión de Versiones
-
-ForgeSpec adopta una política de versionamiento semántico en la forma `x.y.z`, donde:
-
-- **x** (major): representa cambios incompatibles con versiones anteriores;
-- **y** (minor): indica la introducción de nuevas capacidades que mantienen compatibilidad;
-- **z** (patch): señala correcciones y ajustes menores sin impacto estructural.
-
-Cada documento ForgeSpec debe declarar explícitamente la versión con la cual es conforme, lo cual garantiza trazabilidad y validación formal precisa.
+* Tiene `forgespec` y `type` en la raíz.
+* Contiene los elementos obligatorios según su tipo (`entity` o `process`).
+* Los objetos `Field` contienen al menos `name` y `type`.
+* No hay claves no documentadas fuera de extensiones aprobadas.
 
 ---
 
-## Implementación
+## Diseño del Esquema JSON
 
-Para facilitar la adopción práctica de la especificación ForgeSpec, se ha elaborado una [guía de implementación](./implementation.md) que presenta ejemplos formales de modelos del tipo `entity` y `process`, validados conforme a la versión 1.0.0.
+El esquema `forgespec.schema.json` permite validar sintáctica y estructuralmente los documentos ForgeSpec.
 
-Esta guía también incluye lineamientos para validación estructural, orientaciones sobre herramientas compatibles y consideraciones para la generación futura de contratos y artefactos derivados.
+Se puede integrar con herramientas como `ajv` o `jsonschema` y en pipelines CI/CD.
 
-Se recomienda su lectura a todos los equipos técnicos interesados en integrar ForgeSpec en sus flujos de diseño, documentación o generación de interfaces.
+[Consulta aquí la guía detallada de uso del esquema JSON](./using_schema.md)
 
 ---
 
 ## Representación del Metamodelo
 
-La siguiente representación visual sintetiza la estructura conceptual de ForgeSpec en su versión 1.0.0. Este metamodelo establece las relaciones jerárquicas y composicionales entre los elementos que conforman un documento conforme a la especificación:
-
 ![ForgeSpec Metamodel](./0e3c5c8a-7b1f-48c0-acd0-5a535b9ba616.png)
 
-- `Document` representa la raíz del modelo.
-- `Model` es una abstracción que puede adoptar la forma de `EntityModel` o `ProcessModel`.
-- `EntityModel` compone uno o más elementos del tipo `Field`.
-- `ProcessModel` incorpora `input` obligatorio, `output` opcional, y puede estar asociado a una especificación REST (`RestSpec`).
+* `Document` es la raíz
+* `EntityModel` y `ProcessModel` derivan de `Model`
+* `Field` es la unidad de estructura
 
-Para descarga directa del metamodelo en formato PNG:  
 [Descargar metamodelo (PNG)](https://github.com/apifactory-org/forge-spec/raw/main/0e3c5c8a-7b1f-48c0-acd0-5a535b9ba616.png)
+
+---
+
+## Gestión de Versiones
+
+Versión semántica `x.y.z`:
+
+* `x`: cambios incompatibles
+* `y`: nuevas funciones compatibles
+* `z`: correcciones menores
+
+Cada documento debe declarar su versión.
+
+---
+
+## Implementación
+
+La [guía de implementación](./implementation.md) incluye:
+
+* Ejemplos validados
+* Validación estructural
+* Herramientas recomendadas
+* Generación de contratos
+
+---
 
 ## Extensiones y Evolución Esperada
 
-Las siguientes funcionalidades se consideran candidatas a futuras versiones mayores o módulos de extensión formalizados:
+Futuras capacidades:
 
-- Definición de relaciones entre modelos (`hasOne`, `hasMany`, `composition`).
-- Inclusión y herencia de modelos mediante mecanismos como `extends` o `includes`.
-- Soporte para estructuras reutilizables mediante `traits`.
-- Anotaciones formales de seguridad, visibilidad y reglas de acceso.
-- Declaraciones estructuradas para compatibilidad inversa y depreciación.
-- Esquemas de generación para contratos OpenAPI, AsyncAPI y definiciones JSON Schema.
+* Relaciones (`hasOne`, `hasMany`)
+* Herencia (`extends`, `includes`)
+* Traits reutilizables
+* Seguridad y visibilidad
+* Compatibilidad inversa
+* Exportadores OpenAPI, AsyncAPI, JSON Schema
+
+---
+
+## Guía de Uso del Schema JSON
+
+Para validar archivos ForgeSpec usando `forgespec.schema.json`, consulte:
+[./using\_schema.md](./using_schema.md)
 
 ---
 
 © 2025 ForgeSpec Initiative — Esta especificación se distribuye bajo licencia MIT.
-
