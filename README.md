@@ -17,7 +17,9 @@ ForgeSpec promueve la separación entre el modelo de información y sus mecanism
 5. [Definición del Tipo `Field`](#definición-del-tipo-field)
 6. [Reglas de Conformidad](#reglas-de-conformidad)
 7. [Gestión de Versiones](#gestión-de-versiones)
-8. [Extensiones y Evolución Esperada](#extensiones-y-evolución-esperada)
+8. [Implementación](#implementación)
+9. [Representación del Metamodelo](#representación-del-metamodelo)
+10. [Extensiones y Evolución Esperada](#extensiones-y-evolución-esperada)
 
 ---
 
@@ -45,7 +47,7 @@ Todo documento ForgeSpec debe incluir los siguientes elementos en su nivel raíz
 
 | Clave        | Tipo     | Obligatorio | Descripción                                                             |
 |--------------|----------|-------------|-------------------------------------------------------------------------|
-| `forgespec`  | string   | Sí          | Versión exacta de la especificación utilizada. Ej.: `"1.0.0"`.         |
+| `forgespec`  | string   | Sí          | Versión exacta de la especificación utilizada. Ej.: "1.0.0".         |
 | `type`       | string   | Sí          | Clasificación del modelo: `entity` o `process`.                         |
 
 ---
@@ -117,6 +119,16 @@ ForgeSpec adopta una política de versionamiento semántico en la forma `x.y.z`,
 - **z** (patch): señala correcciones y ajustes menores sin impacto estructural.
 
 Cada documento ForgeSpec debe declarar explícitamente la versión con la cual es conforme, lo cual garantiza trazabilidad y validación formal precisa.
+
+---
+
+## Implementación
+
+Para facilitar la adopción práctica de la especificación ForgeSpec, se ha elaborado una [guía de implementación](./implementation.md) que presenta ejemplos formales de modelos del tipo `entity` y `process`, validados conforme a la versión 1.0.0.
+
+Esta guía también incluye lineamientos para validación estructural, orientaciones sobre herramientas compatibles y consideraciones para la generación futura de contratos y artefactos derivados.
+
+Se recomienda su lectura a todos los equipos técnicos interesados en integrar ForgeSpec en sus flujos de diseño, documentación o generación de interfaces.
 
 ---
 
